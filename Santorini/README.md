@@ -1,0 +1,3 @@
+This project is an implementation of a two-player version of the board game Santorini.  It includes an AI player that uses MCTS and a neural network with the imparaai-montecarlo package to make decisions.
+
+Santorini starts with each player placing two builders on the board.  Then the players take turns making one move.  In each move, the player moves one builder to an adjacent space that is no more than 1 level higher than the builder's current location.  Then the player builds an additional level on an unoccupied space adjacent to the worker's new location.  If the builder is on a level three space, than the current player wins.  

@@ -5,33 +5,40 @@ import randomPlayer
 import humanPlayer
 import mctsPlayer
 import heuristicPlayer
+import sys, os
 
 from mcts import mcts
 
-import sys, os
-
-# Disable
-def blockPrint():
-    sys.stdout = open(os.devnull, 'w')
-
-# Restore
-def enablePrint():
-    sys.stdout = sys.__stdout__
 
 class GameManager:
+
     def __init__(self, p1, p2):
+        """The game manager starts and runs a game of santorini
+
+        Keyword Args:
+        p1 -- the Player that will go first
+        p2 -- the Player that will go second
+
+        Return -- the player that won the game"""
+
         self.theBoard = board.Board()
         self.p1 = p1
         self.p2 = p2
         self.currentPlayer = 1
         self.winner = None
-
-    def start(self):
         self._setUp()
         self._play()
+
+
+    def get_winner(self):
+        """return the char of the winning player"""
+
         return self.winner
 
+
     def _setUp(self):
+        """sequentially ask players to each place their peices"""
+
         i = 0
         while i < 4:
             try:
@@ -50,6 +57,8 @@ class GameManager:
                 print("Please enter a legal placement")
 
     def _play(self):
+        """ask players to take turns making moves until one of them wins"""
+
         while (self.theBoard.winner() == '_'):
             try:
                 if self.currentPlayer == 1:
@@ -83,29 +92,63 @@ class GameManager:
 
 
 
+# Disable
+def blockPrint():
+    """stop text from being printed"""
+    sys.stdout = open(os.devnull, 'w')
 
-player1Wins = 0
-for i in range(1):
-    print(f'starting round {i}')
-    a = heuristicPlayer.HeuristicPlayer('a')
-    b = heuristicPlayer.HeuristicPlayer('b')
+# Restore
+def enablePrint():
+    """allow text to be printed again"""
+    sys.stdout = sys.__stdout__
 
-    print("about to start game")
+def main(p1 = 'random', p2= 'random', i =1):
+    """gameManager can take 3 args for the 2 kinds of players and the number of games to play
 
-    result = GameManager(a, b).start()
-    if result == 'a':
-        player1Wins += 1
+    Args:
+    p1 and p2 -- can be 'human', 'random', or 'heuristic' corresponding to the 3 kinds of players
+    i -- an int for the number of games to run"""
 
-print(f'player 1 won {player1Wins} out of 1 games')
-#mctsWinsCount = 0
+    player1Wins = 0
+    totalGames = int(i)
 
-#for i in range(5):
-    #print(f'starting round {i}')
-    #b = randomPlayer.RandomPlayer('b')
-    #a = mctsPlayer.MctsPlayer('a')
-    #game = GameManager(a, b)
-    #result = game.start()
-    #if result == 'a':
-        #mctsWinsCount += 1
+    if p1 == "human":
+        a = humanPlayer.HumanPlayer('a')
+    elif p1 == "random":
+        a = randomPlayer.RandomPlayer('a')
+    else:
+        a = heuristicPlayer.HeuristicPlayer('a')
 
-#print(f'mctsPlayer won {mctsWinsCount} out of 100 games')
+    if p2 == "human":
+        b = humanPlayer.HumanPlayer('b')
+    elif p2 == "random":
+        b = randomPlayer.RandomPlayer('b')
+    else:
+        b = heuristicPlayer.HeuristicPlayer('b')
+
+
+
+
+
+    for i in range(totalGames):
+        print(f'starting round {i}')
+
+        blockPrint()
+
+        game = GameManager(a, b)
+        result = game.get_winner()
+
+        enablePrint()
+
+        if result == 'a':
+            player1Wins += 1
+
+    print(f'player 1 won {player1Wins} out of {totalGames} games')
+
+
+if __name__ == '__main__':
+    main(*sys.argv[1:])
+
+
+
+
